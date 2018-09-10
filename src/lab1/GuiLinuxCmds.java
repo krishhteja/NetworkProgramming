@@ -56,44 +56,23 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		output.setText("");
-		computeCommand();
+		try {
+			computeCommand();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
-	private void computeCommand(){
+	private void computeCommand() throws Exception{
+		HttpClientRequest http = new HttpClientRequest();
 		String s = null;
 		try {
 //        	Scanner scanner = new Scanner(System.in);
         	System.out.print("Enter your command to run: ");
         	String command = input.getText();
-        	String[] cmds = command.split("&&");
-        	for(int i = 0; i < cmds.length; i++){
-//            	String command = scanner.nextLine();
-                Process p = Runtime.getRuntime().exec(cmds[i]);
-                
-                BufferedReader stdInput = new BufferedReader(new 
-                     InputStreamReader(p.getInputStream()));
-
-                BufferedReader stdError = new BufferedReader(new 
-                     InputStreamReader(p.getErrorStream()));
-
-                // read the output from the command
-                System.out.println("Here is the standard output of the command: "+command+"\n");
-                
-                output.append("\n######################################################");
-                output.append("\nCommand --> " + cmds[i]);
-                while ((s = stdInput.readLine()) != null) {
-                	output.append("\n"+s);
-                    System.out.println(s);
-                }
-                
-                // read any errors from the attempted command
-                System.out.println("Here is the standard error of the command (if any):\n");
-                while ((s = stdError.readLine()) != null) {
-                    System.out.println(s);
-                    output.setText(s);
-                }
-                //System.exit(0);	
-        	}
+    		String out = http.sendGet(command);
+    		output.setText(out.replaceAll("NXT", "\n"));
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
@@ -102,3 +81,12 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
         }
 	}
 }
+
+
+
+
+
+
+
+
+
