@@ -20,8 +20,16 @@ public class HttpClientRequest {
 
 	// HTTP GET request
 	public String sendGet(String params) throws Exception {
-		
-		String url = "http://localhost:9000?cmd="+params;
+		String[] paramArray = params.split(";");
+		String finalParams = "cmd1="+paramArray[0];
+		for(int i = 1; i < paramArray.length; i++){
+			String currentCmd = paramArray[i].replaceAll(" ", "SPACE");
+			currentCmd = currentCmd.replaceAll("-", "MINUS");
+			
+			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
+		}
+		System.out.println(finalParams);
+		String url = "http://localhost:9000?count="+paramArray.length+"&"+finalParams;
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();

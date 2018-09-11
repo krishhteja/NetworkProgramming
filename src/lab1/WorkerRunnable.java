@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,11 +39,20 @@ public class WorkerRunnable implements Runnable{
         try {
         	InputStream input  = clientSocket.getInputStream();
         	paramMap = parse(input);  
-
+        	System.out.println("URL CHECK AT SERVER --- " + input.toString());
             System.out.println("Param Map run  - " + paramMap);
-            String cmd = paramMap.get("cmd");
-            System.out.println("Commnad to be executed - " + cmd);
-            OUTPUT = computeCommand(cmd);
+            Integer cmdLength = Integer.valueOf(paramMap.get("count"));
+            String finalCmdToExecute = paramMap.get("cmd1");
+            for(int i = 2; i <= cmdLength; i++){
+            	String cmdName = "cmd" + i;
+            	String cmd = paramMap.get(cmdName);
+            	System.out.println("####$$$$$$$ " + cmd + " #### $$$$$");
+            	finalCmdToExecute = finalCmdToExecute + ";" + cmd;
+                System.out.println("Commnad to be executed - " + cmd);
+            }
+            OUTPUT = computeCommand(finalCmdToExecute);
+            
+            //String cmd = paramMap.get("cmd");
             System.out.println("Output is " + OUTPUT);
             OutputStream output = clientSocket.getOutputStream();
             long time = System.currentTimeMillis();
@@ -63,12 +74,17 @@ public class WorkerRunnable implements Runnable{
         String method = null;  
         String httpVersion = null;  
         String uri = null;  
-  
+        
         // read request line  
         inputLine = lr.readLine();  
+        System.out.println("URL HIT FROM CLIENT IS " + inputLine);
         String[] requestCols = inputLine.split("\\s");  
         method = requestCols[0];  
         uri = requestCols[1];  
+        for(int i = 0; i < requestCols.length; i++){
+        	System.out.println("URL PARAM " + i + " being used is ----- " + requestCols[i]);
+        }
+        System.out.println("URI Being hit is - " + uri);
         httpVersion = requestCols[2];  
         System.out.println("http version:\t" + httpVersion);  
   
@@ -127,10 +143,9 @@ public class WorkerRunnable implements Runnable{
         	output = "##";
         	for(int i = 0; i < cmds.length; i++){
 //            	String command = scanner.nextLine();
-        		if(cmds[i].contains("###")){
-        			cmds[i] = cmds[i].replaceAll("###", " ");
-        		}
-                Process p = Runtime.getRuntime().exec(cmds[i]);
+        		String cmdToExec = cmds[i].replaceAll("MINUS", "-");
+        		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
+        		Process p = Runtime.getRuntime().exec(cmdToExec);
                 
                 BufferedReader stdInput = new BufferedReader(new 
                      InputStreamReader(p.getInputStream()));
