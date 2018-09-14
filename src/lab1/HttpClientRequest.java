@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 public class HttpClientRequest {
 
@@ -15,21 +14,36 @@ public class HttpClientRequest {
 		HttpClientRequest http = new HttpClientRequest();
 
 		System.out.println("Testing 1 - Send Http GET request");
-		http.sendGet("ls");
+		http.sendGet("url", "ls");
 	}
 
 	// HTTP GET request
-	public String sendGet(String params) throws Exception {
-		String[] paramArray = params.split(";");
-		String finalParams = "cmd1="+paramArray[0];
-		for(int i = 1; i < paramArray.length; i++){
-			String currentCmd = paramArray[i].replaceAll(" ", "SPACE");
+	public String sendGet(String urlPath, String params) throws Exception {
+		String[] paramArraySemiColon = params.split(";");
+		String firstParam = paramArraySemiColon[0].replaceAll(" ", "SPACE");
+		firstParam = firstParam.replaceAll("-", "MINUS");
+		firstParam = firstParam.replaceAll("\\|", "PIPE");
+		String finalParams = "cmd1="+firstParam;
+		for(int i = 1; i < paramArraySemiColon.length; i++){
+			String currentCmd = paramArraySemiColon[i].replaceAll(" ", "SPACE");
 			currentCmd = currentCmd.replaceAll("-", "MINUS");
-			
+			currentCmd = currentCmd.replaceAll("\\|", "PIPE");
 			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
 		}
+		/*String[] paramArrayAmpersand = params.split("&&");
+
+		String ampersandFirstParam = paramArrayAmpersand[0].replaceAll(" ", "SPACE");
+		ampersandFirstParam = ampersandFirstParam.replaceAll("-", "MINUS");
+		finalParams = finalParams + "&cmd" + (paramArraySemiColon.length + 1) + "=" + ampersandFirstParam;
+		for(int i = (paramArraySemiColon.length+2), j = 1; i < paramArraySemiColon.length; i++, j++){
+			String currentCmd = paramArrayAmpersand[j].replaceAll(" ", "SPACE");
+			currentCmd = currentCmd.replaceAll("-", "MINUS");
+			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
+		}*/
+		//int count = paramArrayAmpersand.length + paramArraySemiColon.length;
+		int count = paramArraySemiColon.length;
 		System.out.println(finalParams);
-		String url = "http://localhost:9000?count="+paramArray.length+"&"+finalParams;
+		String url = urlPath+":9000?count="+count+"&"+finalParams;
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();

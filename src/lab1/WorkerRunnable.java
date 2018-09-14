@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 
  */
 public class WorkerRunnable implements Runnable{
+	static Logger logger = Logger.getLogger("GuiLinuxCommands");
 	private String OUTPUT = "Krishna";
 	private static final String OUTPUT_HEADERS = "HTTP/1.1 200 OK\r\n" +
 	    "Content-Type: text/html\r\n" + 
@@ -60,7 +62,7 @@ public class WorkerRunnable implements Runnable{
             output.flush();
             output.close();
             input.close();
-            System.out.println("Request processed: " + time);
+            System.out.println("Request processed at time : " + time);
         } catch (IOException e) {
             //report exception somewhere.
             e.printStackTrace();
@@ -145,7 +147,14 @@ public class WorkerRunnable implements Runnable{
 //            	String command = scanner.nextLine();
         		String cmdToExec = cmds[i].replaceAll("MINUS", "-");
         		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
-        		Process p = Runtime.getRuntime().exec(cmdToExec);
+        		cmdToExec = cmdToExec.replaceAll("PIPE", "\\|");
+        		System.out.println("Command before adding it to array is ---- " + cmdToExec);
+        		logger.info("Command before adding it to array ----- " + cmdToExec);
+        		String[] temp = {"/bin/sh", "-c", cmdToExec};
+        		System.out.println("Final Commnad being executed ---- " + temp[0]);
+        		logger.info("Final Commnad being executed ---- " + temp[0]);
+        		
+        		Process p = Runtime.getRuntime().exec(temp);
                 
                 BufferedReader stdInput = new BufferedReader(new 
                      InputStreamReader(p.getInputStream()));
@@ -154,7 +163,7 @@ public class WorkerRunnable implements Runnable{
                      InputStreamReader(p.getErrorStream()));
 
                 // read the output from the command
-                System.out.println("Here is the standard output of the command: "+command+"\n");
+                System.out.println("Here is the standard output of the command: "+cmdToExec+"\n");
                 
                 output = output + ("NXTCommand --> " + cmds[i]);
                 while ((s = stdInput.readLine()) != null) {
@@ -170,8 +179,9 @@ public class WorkerRunnable implements Runnable{
                 //System.exit(0);	
         	}
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.out.println("exception happened - here's what I know: ");
+            logger.info("Exception found is ---- " + e.getMessage());
             e.printStackTrace();
             System.exit(-1);
         }

@@ -1,6 +1,7 @@
 package lab1;
 
 import java.awt.Button;
+
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
@@ -11,18 +12,26 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class GuiLinuxCmds extends Frame implements ActionListener{
 
+	static Logger logger = Logger.getLogger("GuiLinuxCommands");
 	private Label label;
 	private Button submit;
-	private TextField input;
+	private TextField input, url;
 	private TextArea output;
 	
 	public GuiLinuxCmds() {
 		setLayout(new FlowLayout());
 		label = new Label("Enter command");
 		add(label);
+
+		url = new TextField(80);
+		url.setEditable(true);
+		add(url);
 		input = new TextField(80);
 		input.setText("ls");
 		input.setEditable(true);
@@ -47,6 +56,25 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 	}
 	
 	public static void main(String args[]) {
+		FileHandler fh;  
+
+	    try {  
+
+	        // This block configure the logger with handler and formatter  
+	        fh = new FileHandler("/Users/krishnavaddepalli/Desktop/GuiLinuxCommands.log");  
+	        logger.addHandler(fh);
+	        SimpleFormatter formatter = new SimpleFormatter();  
+	        fh.setFormatter(formatter);  
+
+	        // the following statement is used to log any messages  
+	        logger.info("My first log");  
+
+	    } catch (SecurityException e) {  
+	        e.printStackTrace();  
+	    } catch (IOException e) {  
+	        e.printStackTrace();  
+	    }  
+
 		GuiLinuxCmds app = new GuiLinuxCmds();
     }
 
@@ -67,24 +95,17 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 		String s = null;
 		try {
 //        	Scanner scanner = new Scanner(System.in);
-        	System.out.print("Enter your command to run: ");
-        	String command = input.getText();
-    		String out = http.sendGet(command);
+			String command = input.getText();
+			String urlPath = url.getText();
+			logger.info("Commands to be executed are - " + command);
+    		String out = http.sendGet(urlPath ,command);
     		output.setText(out.replaceAll("NXT", "\n"));
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
+            logger.warning("Some issue found");
             e.printStackTrace();
             System.exit(-1);
         }
 	}
 }
-
-
-
-
-
-
-
-
-
