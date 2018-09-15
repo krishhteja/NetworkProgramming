@@ -1,14 +1,12 @@
 package lab1.LinuxCmds;
 import java.io.BufferedReader;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -44,13 +42,19 @@ public class WorkerRunnable implements Runnable{
         	System.out.println("URL CHECK AT SERVER --- " + input.toString());
             System.out.println("Param Map run  - " + paramMap);
             Integer cmdLength = Integer.valueOf(paramMap.get("count"));
-            String finalCmdToExecute = paramMap.get("cmd1");
-            for(int i = 2; i <= cmdLength; i++){
+            String finalCmdToExecute = "";
+            for(int i = 1; i <= cmdLength; i++){
             	String cmdName = "cmd" + i;
             	String cmd = paramMap.get(cmdName);
             	System.out.println("####$$$$$$$ " + cmd + " #### $$$$$");
-            	finalCmdToExecute = finalCmdToExecute + ";" + cmd;
-                System.out.println("Commnad to be executed - " + cmd);
+
+        		String cmdToExec = cmd.replaceAll("MINUS", "-");
+        		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
+        		cmdToExec = cmdToExec.replaceAll("PIPE", "\\|");
+        		cmdToExec = cmdToExec.replaceAll("AMPERSAND", "&");
+        		
+            	finalCmdToExecute = finalCmdToExecute + cmdToExec + ";";
+                System.out.println("Commnad to be executed - " + cmdToExec);
             }
             OUTPUT = computeCommand(finalCmdToExecute);
             
@@ -119,8 +123,8 @@ public class WorkerRunnable implements Runnable{
     }  
     
     public Map<String, String> parseParam(String paramStr, boolean isBody) {  
+    	Map<String, String> paramMap = new HashMap<String, String>();  
         String[] paramPairs = paramStr.trim().split("&");  
-        Map<String, String> paramMap = new HashMap<String, String>();  
   
         String[] paramKv;  
         for (String paramPair : paramPairs) {  
@@ -141,42 +145,29 @@ public class WorkerRunnable implements Runnable{
 		String output = "Command not found";
 		try {
 //        	Scanner scanner = new Scanner(System.in);
-        	String[] cmds = command.split(";");
-        	output = "##";
-        	for(int i = 0; i < cmds.length; i++){
-//            	String command = scanner.nextLine();
-        		String cmdToExec = cmds[i].replaceAll("MINUS", "-");
-        		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
-        		cmdToExec = cmdToExec.replaceAll("PIPE", "\\|");
-        		System.out.println("Command before adding it to array is ---- " + cmdToExec);
-        		logger.info("Command before adding it to array ----- " + cmdToExec);
-        		String[] temp = {"/bin/sh", "-c", cmdToExec};
-        		
-        		Process p = Runtime.getRuntime().exec(temp);
-                
-                BufferedReader stdInput = new BufferedReader(new 
-                     InputStreamReader(p.getInputStream()));
+    		String[] temp = {"/bin/sh", "-c", command};
+    		logger.info("Final commands being executed are - " + Arrays.toString(temp));
+    		Process p = Runtime.getRuntime().exec(temp);
+            output = "Commands being executed are - " + Arrays.toString(temp);
+            BufferedReader stdInput = new BufferedReader(new 
+                 InputStreamReader(p.getInputStream()));
 
-                BufferedReader stdError = new BufferedReader(new 
-                     InputStreamReader(p.getErrorStream()));
+            BufferedReader stdError = new BufferedReader(new 
+                 InputStreamReader(p.getErrorStream()));
+            
+            while ((s = stdInput.readLine()) != null) {
+            	output = output + "NXT"+s;
+                System.out.println(s);
+            }
+            
+            // read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+            //System.exit(0);	
 
-                // read the output from the command
-                System.out.println("Here is the standard output of the command: "+cmdToExec+"\n");
-                
-                output = output + ("NXTCommand --> " + cmds[i]);
-                while ((s = stdInput.readLine()) != null) {
-                	output = output + "NXT"+s;
-                    System.out.println(s);
-                }
-                
-                // read any errors from the attempted command
-                System.out.println("Here is the standard error of the command (if any):\n");
-                while ((s = stdError.readLine()) != null) {
-                    System.out.println(s);
-                }
-                //System.exit(0);	
-        	}
-        }
+		}
         catch (Exception e) {
             System.out.println("exception happened - here's what I know: ");
             logger.info("Exception found is ---- " + e.getMessage());

@@ -31,6 +31,7 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 
 		url = new TextField(80);
 		url.setEditable(true);
+		url.setText("http://localhost");
 		add(url);
 		input = new TextField(80);
 		input.setText("ls");

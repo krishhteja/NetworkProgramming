@@ -7,7 +7,7 @@ public class DateClient {
 			System.out.println("Usage: DateClient host port");
 		}
 		//String host = args[0];
-		String host = "18.222.190.225";
+		String host = "18.223.164.91";
 		int port;
 		try {
 			port = Integer.parseInt("9000");

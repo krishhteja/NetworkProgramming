@@ -66,11 +66,6 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 //		computeCommand();
 	}
 	
-
-	public volatile String s = null;
-	public volatile String cmdOutput = "Command not found";
-
-	
 	@Override
 	public void run() {
 		command = input.getText();
@@ -79,10 +74,10 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 		synchronized(this){
             this.runningThread = Thread.currentThread();
         }
-            new Thread(
+        	new Thread(
             		new RunCmds(command)
             		).start();
-		
+        	
 	}
 	
 	public final void printOutput(String outputOfCmd){

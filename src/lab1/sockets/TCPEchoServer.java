@@ -2,7 +2,12 @@ package lab1.sockets;
 
 //Requires a single command line arg - the port number
 import java.net.*;	// need this for InetAddress, Socket, ServerSocket 
+import java.nio.charset.StandardCharsets;
 
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
+import java.awt.HeadlessException;
 import java.io.*;	// need this for I/O stuff
 
 
@@ -52,12 +57,17 @@ public class TCPEchoServer {
 		//Set up streams 
 		InputStream in = s.getInputStream(); 
 		OutputStream out = s.getOutputStream();
-		
+		String name = "Krishna";
+		byte[] myName = name.getBytes();
+		int totalLength = BUFSIZE + myName.length; 
+		byte[] reply = new byte[totalLength];
+		System.arraycopy(buff, 0, reply, 0, buff.length);
+		System.arraycopy(myName, 0, reply, BUFSIZE, myName.length);
 		//read/write loop 
 //Modify your code here so that it sends back your name in addition to the echoed symbols
-		while ((bytesread = in.read(buff)) != -1) {
-
-			System.out.println("Input is - " + buff.toString());
+		while ((bytesread = in.read(reply)) != -1) {
+			String str = new String(reply, StandardCharsets.UTF_8);
+			System.out.println("Input is - " + str);
 			out.write(buff,0,bytesread);
 			out.flush();
 		} 

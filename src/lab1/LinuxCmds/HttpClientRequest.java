@@ -20,30 +20,17 @@ public class HttpClientRequest {
 	// HTTP GET request
 	public String sendGet(String urlPath, String params) throws Exception {
 		String[] paramArraySemiColon = params.split(";");
-		String firstParam = paramArraySemiColon[0].replaceAll(" ", "SPACE");
-		firstParam = firstParam.replaceAll("-", "MINUS");
-		firstParam = firstParam.replaceAll("\\|", "PIPE");
-		String finalParams = "cmd1="+firstParam;
-		for(int i = 1; i < paramArraySemiColon.length; i++){
+		String finalParams = "";
+		for(int i = 0; i < paramArraySemiColon.length; i++){
 			String currentCmd = paramArraySemiColon[i].replaceAll(" ", "SPACE");
 			currentCmd = currentCmd.replaceAll("-", "MINUS");
 			currentCmd = currentCmd.replaceAll("\\|", "PIPE");
+			currentCmd = currentCmd.replaceAll("&", "AMPERSAND");
 			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
 		}
-		/*String[] paramArrayAmpersand = params.split("&&");
-
-		String ampersandFirstParam = paramArrayAmpersand[0].replaceAll(" ", "SPACE");
-		ampersandFirstParam = ampersandFirstParam.replaceAll("-", "MINUS");
-		finalParams = finalParams + "&cmd" + (paramArraySemiColon.length + 1) + "=" + ampersandFirstParam;
-		for(int i = (paramArraySemiColon.length+2), j = 1; i < paramArraySemiColon.length; i++, j++){
-			String currentCmd = paramArrayAmpersand[j].replaceAll(" ", "SPACE");
-			currentCmd = currentCmd.replaceAll("-", "MINUS");
-			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
-		}*/
-		//int count = paramArrayAmpersand.length + paramArraySemiColon.length;
 		int count = paramArraySemiColon.length;
 		System.out.println(finalParams);
-		String url = urlPath+":9000?count="+count+"&"+finalParams;
+		String url = urlPath+":9000?count="+count+finalParams;
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();

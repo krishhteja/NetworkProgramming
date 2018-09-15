@@ -9,13 +9,14 @@ public class UDPEchoServer {
 	
 	static public void main(String args[]) throws SocketException 
 	{ 
-		
+		/*
 		if (args.length != 1) {
 			throw new IllegalArgumentException("Must specify a port!"); 
 						
 		}
-		
-		int port = Integer.parseInt(args[0]);
+		*/
+		int port = Integer.parseInt("9000");
+		//int port = Integer.parseInt(args[0]);
 		DatagramSocket s = new DatagramSocket(port);
 		DatagramPacket dp = new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
 		
