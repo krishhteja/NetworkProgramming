@@ -1,4 +1,4 @@
-package lab1;
+package lab1.LinuxCmds;
 
 import java.net.ServerSocket;
 import java.net.Socket;

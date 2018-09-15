@@ -1,4 +1,4 @@
-package lab1;
+package lab1.sockets;
 
 
 import java.net.*;// need this for InetAddress, Socket, ServerSocket 

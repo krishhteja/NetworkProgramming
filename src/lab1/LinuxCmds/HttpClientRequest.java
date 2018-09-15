@@ -1,4 +1,4 @@
-package lab1;
+package lab1.LinuxCmds;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

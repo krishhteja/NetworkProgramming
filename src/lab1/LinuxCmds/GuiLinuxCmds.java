@@ -1,4 +1,4 @@
-package lab1;
+package lab1.LinuxCmds;
 
 import java.awt.Button;
 
@@ -65,10 +65,8 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 	        logger.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);  
-
 	        // the following statement is used to log any messages  
 	        logger.info("My first log");  
-
 	    } catch (SecurityException e) {  
 	        e.printStackTrace();  
 	    } catch (IOException e) {  
@@ -92,14 +90,18 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 	
 	private void computeCommand() throws Exception{
 		HttpClientRequest http = new HttpClientRequest();
-		String s = null;
 		try {
 //        	Scanner scanner = new Scanner(System.in);
 			String command = input.getText();
 			String urlPath = url.getText();
+			command = command.replaceAll("&&", ";");
 			logger.info("Commands to be executed are - " + command);
     		String out = http.sendGet(urlPath ,command);
-    		output.setText(out.replaceAll("NXT", "\n"));
+    		String display = out.replaceAll("SPACE", " ");
+    		display = display.replaceAll("MINUS", "-");
+    		display = display.replaceAll("PIPE", "\\|");
+    		display = display.replaceAll("NXT", "\n");
+    		output.setText(display);
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");

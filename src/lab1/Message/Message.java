@@ -1,4 +1,4 @@
-package lab1;
+package lab1.Message;
 
 import java.util.*;
 import java.io.*;

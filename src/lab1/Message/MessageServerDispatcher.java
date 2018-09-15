@@ -1,4 +1,4 @@
-package lab1;
+package lab1.Message;
 
 import java.io.*;
 import java.net.*;
@@ -22,7 +22,7 @@ public class MessageServerDispatcher extends Thread {
 
 	public void log(String s) {
 		if (!logging) return;
-		System.err.println("MessageServerDispatcher: " + s);
+		System.out.println("MessageServerDispatcher: " + s);
 	}
 
 	public void run() {

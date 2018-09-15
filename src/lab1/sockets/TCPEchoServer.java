@@ -1,4 +1,4 @@
-package lab1;
+package lab1.sockets;
 
 //Requires a single command line arg - the port number
 import java.net.*;	// need this for InetAddress, Socket, ServerSocket 
@@ -12,11 +12,11 @@ public class TCPEchoServer {
 	// main starts things rolling
 	static public void main(String args[]) { 
 		
-		if (args.length != 1){
+		/*if (args.length != 1){
 			throw new IllegalArgumentException("Must specify a port!");
-		}
+		}*/
 		
-		int port = Integer.parseInt(args[0]);
+		int port = Integer.parseInt("9000");
 		try { 
 			// Create Server Socket (passive socket) 
 			ServerSocket ss = new ServerSocket(port);
@@ -54,11 +54,13 @@ public class TCPEchoServer {
 		OutputStream out = s.getOutputStream();
 		
 		//read/write loop 
-
 //Modify your code here so that it sends back your name in addition to the echoed symbols
 		while ((bytesread = in.read(buff)) != -1) {
+
+			System.out.println("Input is - " + buff.toString());
 			out.write(buff,0,bytesread);
-			} 
+			out.flush();
+		} 
 		
 		System.out.println("Client has left\n"); 
 		

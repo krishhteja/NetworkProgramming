@@ -1,4 +1,4 @@
-package lab1;
+package lab1.LinuxCmds;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -136,7 +136,7 @@ public class WorkerRunnable implements Runnable{
         return paramMap;  
     }  
     
-	private String computeCommand(String command){
+	public String computeCommand(String command){
 		String s = null;
 		String output = "Command not found";
 		try {
@@ -151,8 +151,6 @@ public class WorkerRunnable implements Runnable{
         		System.out.println("Command before adding it to array is ---- " + cmdToExec);
         		logger.info("Command before adding it to array ----- " + cmdToExec);
         		String[] temp = {"/bin/sh", "-c", cmdToExec};
-        		System.out.println("Final Commnad being executed ---- " + temp[0]);
-        		logger.info("Final Commnad being executed ---- " + temp[0]);
         		
         		Process p = Runtime.getRuntime().exec(temp);
                 
