@@ -1,7 +1,6 @@
 package lab1.LinuxCmds;
 
 import java.awt.Button;
-
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;

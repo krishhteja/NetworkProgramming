@@ -1,83 +1,74 @@
 package lab1.LinuxCmds;
+
+import java.awt.TextArea;
 import java.io.BufferedReader;
-import java.io.IOException;
-
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
 
  */
 public class RunCmds implements Runnable{
-	protected String serverText   = null;
-	LinuxCmds lx = new LinuxCmds();
+	protected String serverText   = null, type = null;
+	protected TextArea output = null;
 
-    public RunCmds(String Text) {
+    public RunCmds(String type, String Text, TextArea output) {
         this.serverText   = Text;
+        this.type = type;
+        this.output = output;
     }
 
     public void run() {
-    	computeCommand(serverText);
+    	if(type.equalsIgnoreCase("loop")){
+    		computeLoop(serverText, output);
+    	}else{
+    		computeCommand(serverText, output);
+    	}
     }
     
-	public String computeCommand(String command){
+    public void computeCommand(String command, TextArea outputTextArea){
 		System.out.println(Thread.currentThread().getName());
 		String s = null;
-		String output = "Command not found";
 		try {
 //        	Scanner scanner = new Scanner(System.in);
-        	String[] cmds = command.split(";");
-        	output = "##";
-        	for(int i = 0; i < cmds.length; i++){
-//            	String command = scanner.nextLine();
-        		String cmdToExec = cmds[i];
-        		System.out.println("Command before adding it to array is ---- " + cmdToExec);
-        		String[] temp = {"/bin/sh", "-c", cmdToExec};
-        		
-        		Process p = Runtime.getRuntime().exec(temp);
-                
-                BufferedReader stdInput = new BufferedReader(new 
+        	String[] temp = {"/bin/sh", "-c", command};
+        	
+        	Process p = Runtime.getRuntime().exec(temp);
+               
+        	BufferedReader stdInput = new BufferedReader(new 
                      InputStreamReader(p.getInputStream()));
 
-                BufferedReader stdError = new BufferedReader(new 
+        	BufferedReader stdError = new BufferedReader(new 
                      InputStreamReader(p.getErrorStream()));
 
                 // read the output from the command
-                System.out.println("Here is the standard output of the command: "+cmdToExec+"\n");
+        	System.out.println("Here is the standard output of the command: "+command+"\n");
                 
-                output = output + ("NXTCommand --> " + cmds[i]);
-                while ((s = stdInput.readLine()) != null) {
-                	output = output + s;
-                    System.out.println(s);
-                }
+        	while ((s = stdInput.readLine()) != null) {
+        		outputTextArea.append("\n"+s);
+        		System.out.println(s);
+        	}
                 
                 // read any errors from the attempted command
-                System.out.println("Here is the standard error of the command (if any):\n");
-                while ((s = stdError.readLine()) != null) {
-                    System.out.println(s);
-                }
-                //System.exit(0);	
+        	System.out.println("Here is the standard error of the command (if any):\n");
+        	while ((s = stdError.readLine()) != null) {
+        		outputTextArea.append("\n"+s);
+        		System.out.println(s);
         	}
+                //System.exit(0);	
         }
         catch (Exception e) {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
             System.exit(-1);
         }
-		
-		lx.printOutput(output);
-		return output;
 	}
-
+    
+    public void computeLoop(String count, TextArea outputTextArea){
+		System.out.println(Thread.currentThread().getName());
+		outputTextArea.append("Running empty loop for " + count + " times");
+		for(int i = 0; i < Integer.valueOf(count); i++){
+			outputTextArea.append("\nRunning " + i + " iteration");
+		}
+    }
 }

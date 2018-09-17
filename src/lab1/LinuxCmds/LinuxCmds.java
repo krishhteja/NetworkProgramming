@@ -10,18 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Logger;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 
 	private Label label;
-	private Button submit;
-	private TextField input;
+	private Button submit, loop;
+	private TextField input, type;
 	private TextArea output;
 	
     protected boolean      isStopped    = false;
@@ -39,6 +35,14 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 		submit = new Button("Run");
 		add(submit);
 		submit.addActionListener(this);
+		type = new TextField(5);
+		add(type);
+		type.hide();
+
+		loop = new Button("Loop");
+		add(loop);
+		loop.addActionListener(this);
+		
 		output = new TextArea();
 		output.setEditable(false);
 		output.setSize(30, 30);
@@ -60,29 +64,33 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Object src = e.getSource();
 		// TODO Auto-generated method stub
+		if(src == loop){
+			type.setText("loop");
+		}else{
+			type.setText("command");
+		}
 		output.setText("");
 		run();
-//		computeCommand();
 	}
 	
 	@Override
 	public void run() {
 		command = input.getText();
-		output.setText("");
+		String typeOfEvent = type.getText();
+		if(typeOfEvent.equals("loop") && !NumberUtils.isNumber(command)){
+			output.setText("Please enter a valid number");
+		}
 		// TODO Auto-generated method stub
-		synchronized(this){
-            this.runningThread = Thread.currentThread();
-        }
-        	new Thread(
-            		new RunCmds(command)
-            		).start();
+		else{
+			synchronized(this){
+	            this.runningThread = Thread.currentThread();
+	        }
+	        	new Thread(
+	            		new RunCmds(typeOfEvent, command, output)
+	            		).start();
+		}
         	
 	}
-	
-	public final void printOutput(String outputOfCmd){
-		outputOfCmd = outputOfCmd.replaceAll("NXT", "\n");
-		output.append(outputOfCmd);
-	}
-
 }
