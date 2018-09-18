@@ -67,8 +67,15 @@ public class RunCmds implements Runnable{
     public void computeLoop(String count, TextArea outputTextArea){
 		System.out.println(Thread.currentThread().getName());
 		outputTextArea.append("Running empty loop for " + count + " times");
+		long current  = 1; //n1
+		long previous = 0; //n2
+		long next;
 		for(int i = 0; i < Integer.valueOf(count); i++){
-			outputTextArea.append("\nRunning " + i + " iteration");
+			next = current + previous;
+			outputTextArea.append("\nRunning " + i + " iteration. Result is : " + next);
+			current = previous;
+			previous = next;
+			System.out.println("Current value is : " + current + " previous value is : " + next);
 		}
     }
 }

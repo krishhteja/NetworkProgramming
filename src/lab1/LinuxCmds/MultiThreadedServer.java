@@ -75,7 +75,7 @@ public class MultiThreadedServer implements Runnable{
 	    try {  
 
 	        // This block configure the logger with handler and formatter  
-	        fh = new FileHandler("/Users/krishnavaddepalli/Desktop/MultiThreadServer.log");  
+	        fh = new FileHandler("/home/ubuntu/MultiThreadServer.log");  
 	        logger.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);

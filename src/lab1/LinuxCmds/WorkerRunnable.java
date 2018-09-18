@@ -1,4 +1,5 @@
 package lab1.LinuxCmds;
+import java.awt.TextArea;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,24 +42,29 @@ public class WorkerRunnable implements Runnable{
         	paramMap = parse(input);  
         	System.out.println("URL CHECK AT SERVER --- " + input.toString());
             System.out.println("Param Map run  - " + paramMap);
-            Integer cmdLength = Integer.valueOf(paramMap.get("count"));
-            String finalCmdToExecute = "";
-            for(int i = 1; i <= cmdLength; i++){
-            	String cmdName = "cmd" + i;
-            	String cmd = paramMap.get(cmdName);
-            	System.out.println("####$$$$$$$ " + cmd + " #### $$$$$");
-
-        		String cmdToExec = cmd.replaceAll("MINUS", "-");
-        		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
-        		cmdToExec = cmdToExec.replaceAll("PIPE", "\\|");
-        		cmdToExec = cmdToExec.replaceAll("AMPERSAND", "&");
-        		
-            	finalCmdToExecute = finalCmdToExecute + cmdToExec + ";";
-                System.out.println("Commnad to be executed - " + cmdToExec);
+            String typeOfExecution = paramMap.get("type");
+            if(typeOfExecution.equals("loop")){
+            	String count = paramMap.get("count");
+            	OUTPUT = computeLoop(count);
+            }else{
+	            Integer cmdLength = Integer.valueOf(paramMap.get("count"));
+	            String finalCmdToExecute = "";
+	            for(int i = 1; i <= cmdLength; i++){
+	            	String cmdName = "cmd" + i;
+	            	String cmd = paramMap.get(cmdName);
+	            	System.out.println("####$$$$$$$ " + cmd + " #### $$$$$");
+	
+	        		String cmdToExec = cmd.replaceAll("MINUS", "-");
+	        		cmdToExec = cmdToExec.replaceAll("SPACE", " ");
+	        		cmdToExec = cmdToExec.replaceAll("PIPE", "\\|");
+	        		cmdToExec = cmdToExec.replaceAll("AMPERSAND", "&");
+	        		
+	            	finalCmdToExecute = finalCmdToExecute + cmdToExec + ";";
+	                System.out.println("Commnad to be executed - " + cmdToExec);
+	            }
+	            OUTPUT = computeCommand(finalCmdToExecute);
             }
-            OUTPUT = computeCommand(finalCmdToExecute);
-            
-            //String cmd = paramMap.get("cmd");
+          //String cmd = paramMap.get("cmd");
             System.out.println("Output is " + OUTPUT);
             OutputStream output = clientSocket.getOutputStream();
             long time = System.currentTimeMillis();
@@ -176,5 +182,21 @@ public class WorkerRunnable implements Runnable{
         }
 		return output;
 	}
+	
+	public String computeLoop(String count){
+		String output = "";
+		System.out.println(Thread.currentThread().getName());
+		long current  = 1; //n1
+		long previous = 0; //n2
+		long next;
+		for(int i = 0; i < Integer.valueOf(count); i++){
+			next = current + previous;
+			current = previous;
+			previous = next;
+			output = output + "Iteration : " + i +" value is : " + next + "NXT";
+			System.out.println("Iteration : " + i +" value is : " + next);
+		}
+		return output;
+    }
 
 }

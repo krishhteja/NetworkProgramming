@@ -68,7 +68,7 @@ public class TCPEchoServer {
 		while ((bytesread = in.read(reply)) != -1) {
 			String str = new String(reply, StandardCharsets.UTF_8);
 			System.out.println("Input is - " + str);
-			out.write(buff,0,bytesread);
+			out.write(reply,0,reply.length);
 			out.flush();
 		} 
 		

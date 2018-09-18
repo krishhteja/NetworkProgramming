@@ -14,24 +14,31 @@ public class HttpClientRequest {
 		HttpClientRequest http = new HttpClientRequest();
 
 		System.out.println("Testing 1 - Send Http GET request");
-		http.sendGet("url", "ls");
+		http.sendGet("url", "ls", "command");
 	}
 
 	// HTTP GET request
-	public String sendGet(String urlPath, String params) throws Exception {
-		String[] paramArraySemiColon = params.split(";");
-		String finalParams = "";
-		for(int i = 0; i < paramArraySemiColon.length; i++){
-			String currentCmd = paramArraySemiColon[i].replaceAll(" ", "SPACE");
-			currentCmd = currentCmd.replaceAll("-", "MINUS");
-			currentCmd = currentCmd.replaceAll("\\|", "PIPE");
-			currentCmd = currentCmd.replaceAll("&", "AMPERSAND");
-			finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
+	public String sendGet(String urlPath, String params, String type) throws Exception {
+		StringBuffer response = new StringBuffer();
+		String url = urlPath;
+		if(type.equals("loop")){
+			response.append("Running empty loop for " + params + " timesNXT");
+			url = url+":9000?type=loop&count="+params;
+			System.out.println("URL " + url);
+		}else{
+			String[] paramArraySemiColon = params.split(";");
+			String finalParams = "";
+			for(int i = 0; i < paramArraySemiColon.length; i++){
+				String currentCmd = paramArraySemiColon[i].replaceAll(" ", "SPACE");
+				currentCmd = currentCmd.replaceAll("-", "MINUS");
+				currentCmd = currentCmd.replaceAll("\\|", "PIPE");
+				currentCmd = currentCmd.replaceAll("&", "AMPERSAND");
+				finalParams = finalParams + "&cmd"+(i+1)+"="+currentCmd; 
+			}
+			int count = paramArraySemiColon.length;
+			System.out.println(finalParams);
+			url = url+":9000?type=cmd&count="+count+finalParams;
 		}
-		int count = paramArraySemiColon.length;
-		System.out.println(finalParams);
-		String url = urlPath+":9000?count="+count+finalParams;
-		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -48,14 +55,10 @@ public class HttpClientRequest {
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
 		String inputLine;
-		StringBuffer response = new StringBuffer();
 		while ((inputLine = in.readLine()) != null) {
 			response.append(inputLine);
 		}
 		in.close();
-		
-		//print result
-		System.out.println("Response - " + response.toString().replaceAll("NXT", "\n"));
 		return response.toString();
 	}
 }

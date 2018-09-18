@@ -15,23 +15,36 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 public class GuiLinuxCmds extends Frame implements ActionListener{
 
 	static Logger logger = Logger.getLogger("GuiLinuxCommands");
-	private Label label;
-	private Button submit;
-	private TextField input, url;
-	private TextArea output;
+	private Label label, labelCmd;
+	private Button submit, loopBtn;
+	private TextField input, url, type;
+	private TextArea output, loopOp;
 	
 	public GuiLinuxCmds() {
 		setLayout(new FlowLayout());
-		label = new Label("Enter command");
+		label = new Label("Enter url");
 		add(label);
 
 		url = new TextField(80);
 		url.setEditable(true);
 		url.setText("http://localhost");
 		add(url);
+
+
+		setLayout(new FlowLayout());
+		labelCmd = new Label("Enter url");
+		add(labelCmd);
+		
+		type = new TextField(80);
+		type.setEditable(true);
+		add(type);
+		type.hide();
+		
 		input = new TextField(80);
 		input.setText("ls");
 		input.setEditable(true);
@@ -39,10 +52,21 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 		submit = new Button("Run");
 		add(submit);
 		submit.addActionListener(this);
+
+		loopBtn = new Button("Loop");
+		add(loopBtn);
+		loopBtn.addActionListener(this);
 		output = new TextArea();
 		output.setEditable(false);
 		output.setSize(30, 30);
 		add(output);
+		
+
+		loopOp = new TextArea();
+		loopOp.setEditable(false);
+		loopOp.setSize(30, 30);
+		add(loopOp);
+		
 		setTitle("Run your linux commands");
 		setSize(500, 500);
 		setVisible(true);
@@ -79,7 +103,16 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		output.setText("");
+		
+		Object src = e.getSource();
+		// TODO Auto-generated method stub
+		if(src == loopBtn){
+			type.setText("loop");
+			loopOp.setText("");
+		}else{
+			type.setText("command");
+			output.setText("");
+		}
 		try {
 			computeCommand();
 		} catch (Exception e1) {
@@ -93,15 +126,35 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 		try {
 //        	Scanner scanner = new Scanner(System.in);
 			String command = input.getText();
+			String typeOfEvent = type.getText();
 			String urlPath = url.getText();
-			command = command.replaceAll("&&", ";");
-			logger.info("Commands to be executed are - " + command);
-    		String out = http.sendGet(urlPath ,command);
-    		String display = out.replaceAll("SPACE", " ");
-    		display = display.replaceAll("MINUS", "-");
-    		display = display.replaceAll("PIPE", "\\|");
-    		display = display.replaceAll("NXT", "\n");
-    		output.setText(display);
+			if(typeOfEvent.equals("loop") && !NumberUtils.isNumber(command)){
+				output.setText("Please enter a valid number");
+			}
+			// TODO Auto-generated method stub
+			else{
+				if(typeOfEvent.equals("loop")){
+					if(NumberUtils.isNumber(command)){
+						System.out.println("Number of loops to be executed - " + command);
+						logger.info("Number of loops to be executed - " + command);
+			    		String out = http.sendGet(urlPath ,command, typeOfEvent);
+			    		out = out.replaceAll("NXT", "\n");
+			    		loopOp.setText(out);
+					}else{
+						loopOp.setText("Enter a valid number to run the loop");
+					}
+					
+				}else{
+					command = command.replaceAll("&&", ";");
+					logger.info("Commands to be executed are - " + command);
+		    		String out = http.sendGet(urlPath ,command, typeOfEvent);
+		    		String display = out.replaceAll("SPACE", " ");
+		    		display = display.replaceAll("MINUS", "-");
+		    		display = display.replaceAll("PIPE", "\\|");
+		    		display = display.replaceAll("NXT", "\n");
+		    		output.setText(display);		
+				}
+			}
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
