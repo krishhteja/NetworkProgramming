@@ -7,7 +7,7 @@ public class DateClient {
 			System.out.println("Usage: DateClient host port");
 		}
 		//String host = args[0];
-		String host = "18.223.164.91";
+		String host = "18.218.177.45";
 		int port;
 		try {
 			port = Integer.parseInt("9000");
@@ -24,7 +24,7 @@ public class DateClient {
 		}
 		Message m = new Message();
 		m.setType(DateService.DATE_SERVICE_MESSAGE);
-		m.setParam("person","krishna");
+		m.setParam("person","vaddepalli");
 		m = conn.call(m);
 		System.out.println("Date " + m.getParam("date"));
 		m.setType(75);

@@ -52,7 +52,7 @@ public class TCPEchoServer {
 		int bytesread = 0;
 		
 		//print out client's address
-		System.out.println("Connection from " + s.getInetAddress().getHostAddress() + " - Printing name - Krishna Teja Vaddepalli");
+		System.out.println("Connection from " + s.getInetAddress().getHostAddress());
 		
 		//Set up streams 
 		InputStream in = s.getInputStream(); 

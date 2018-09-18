@@ -2,6 +2,7 @@ package lab1.sockets;
 
 
 import java.net.*;// need this for InetAddress, Socket, ServerSocket 
+import java.nio.charset.StandardCharsets;
 import java.io.*;// need this for I/O stuff
 
 public class UDPEchoServer { 
@@ -19,16 +20,26 @@ public class UDPEchoServer {
 		//int port = Integer.parseInt(args[0]);
 		DatagramSocket s = new DatagramSocket(port);
 		DatagramPacket dp = new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
-		
 		try { 
 			while (true) {
 				s.receive(dp);
 				// print out client's address 
 				System.out.println("Message from " + dp.getAddress().getHostAddress());
-				
+
+				byte[] inputData = dp.getData();
+				String name = "Krishna";
+				byte[] myName = name.getBytes();
+				int totalLength = BUFSIZE + myName.length; 
+				byte[] reply = new byte[totalLength];
+				System.arraycopy(inputData, 0, reply, 0, inputData.length);
+				System.arraycopy(myName, 0, reply, BUFSIZE, myName.length);
+				DatagramPacket out = new DatagramPacket(reply, totalLength);
+				byte[] output = out.getData();
+				String str = new String(output, StandardCharsets.UTF_8);
+				System.out.println("Input is - " + str);
 				// Send it right back 
-				s.send(dp); 
-				dp.setLength(BUFSIZE);// avoid shrinking the packet buffer
+				s.send(out); 
+				dp.setLength(out.getLength());// avoid shrinking the packet buffer
 				
 			} 
 		} catch (IOException e) {

@@ -18,7 +18,7 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 	private Label label;
 	private Button submit, loop;
 	private TextField input, type;
-	private TextArea output;
+	private TextArea output, loopOp;
 	
     protected boolean      isStopped    = false;
     protected Thread       runningThread= null;
@@ -42,12 +42,17 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 		loop = new Button("Loop");
 		add(loop);
 		loop.addActionListener(this);
-		
+
 		output = new TextArea();
 		output.setEditable(false);
 		output.setSize(30, 30);
 		add(output);
-		setTitle("Run your linux commands");
+
+		loopOp = new TextArea();
+		loopOp.setEditable(false);
+		loopOp.setSize(30, 30);
+		add(loopOp);
+		setTitle("Run your linux commands or enter a number");
 		setSize(500, 500);
 		setVisible(true);
 		
@@ -68,10 +73,11 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 		// TODO Auto-generated method stub
 		if(src == loop){
 			type.setText("loop");
+			loopOp.setText("");
 		}else{
 			type.setText("command");
+			output.setText("");
 		}
-		output.setText("");
 		run();
 	}
 	
@@ -84,12 +90,22 @@ public final class LinuxCmds extends Frame implements ActionListener, Runnable{
 		}
 		// TODO Auto-generated method stub
 		else{
-			synchronized(this){
-	            this.runningThread = Thread.currentThread();
-	        }
-	        	new Thread(
-	            		new RunCmds(typeOfEvent, command, output)
-	            		).start();
+			if(typeOfEvent.equals("loop")){
+				synchronized(this){
+		            this.runningThread = Thread.currentThread();
+		        }
+		        	new Thread(
+		            		new RunCmds(typeOfEvent, command, loopOp)
+		            		).start();
+			}else{
+				synchronized(this){
+		            this.runningThread = Thread.currentThread();
+		        }
+		        	new Thread(
+		            		new RunCmds(typeOfEvent, command, output)
+		            		).start();
+
+			}
 		}
         	
 	}
