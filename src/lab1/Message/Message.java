@@ -24,6 +24,7 @@ public class Message {
 	}
 	
 	public Message() {
+		
 	}
 	
 	public static Message getMessage(Reader in) throws IOException {

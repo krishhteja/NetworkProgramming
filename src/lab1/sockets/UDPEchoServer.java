@@ -29,20 +29,17 @@ public class UDPEchoServer {
 				byte[] inputData = dp.getData();
 				String name = "Krishna";
 				byte[] myName = name.getBytes();
-				int totalLength = BUFSIZE + myName.length; 
+				int totalLength = inputData.length + myName.length; 
 				byte[] reply = new byte[totalLength];
-				System.arraycopy(inputData, 0, reply, 0, inputData.length);
-				System.arraycopy(myName, 0, reply, BUFSIZE, myName.length);
-				DatagramPacket out = new DatagramPacket(reply, totalLength);
-				byte[] output = out.getData();
-				String str = new String(output, StandardCharsets.UTF_8);
-				System.out.println("Input is - " + str);
+				System.arraycopy(myName, 0, reply, 0, myName.length);
+				System.arraycopy(inputData, 0, reply, myName.length, inputData.length);
+				DatagramPacket out = new DatagramPacket(reply, reply.length, dp.getAddress(), dp.getPort());
 				// Send it right back 
 				s.send(out); 
-				dp.setLength(out.getLength());// avoid shrinking the packet buffer
-				
-			} 
-		} catch (IOException e) {
+				out.setLength(out.getLength());// avoid shrinking the packet buffer
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Fatal I/O Error !"); 
 			System.exit(0);
 			

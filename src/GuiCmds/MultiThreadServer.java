@@ -1,48 +1,44 @@
-package lab1.LinuxCmds;
+package GuiCmds;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-public class MultiThreadedServer implements Runnable{
+public class MultiThreadServer implements Runnable{
 	
-	static Logger logger = Logger.getLogger("GuiLinuxCommands");
     protected int          serverPort   = 8080;
     protected ServerSocket serverSocket = null;
     protected boolean      isStopped    = false;
     protected Thread       runningThread= null;
-
-    public MultiThreadedServer(int port){
-        this.serverPort = port;
-    }
-
-    public void run(){
-        synchronized(this){
+	public MultiThreadServer(int port) {
+		this.serverPort = port;
+	}
+	public void run(){
+        synchronized(this){ // a pattern is followed for execution for threads
             this.runningThread = Thread.currentThread();
         }
         openServerSocket();
-        while(! isStopped()){
+        while(! isStopped()){ //If server is running
             Socket clientSocket = null;
             try {
-                clientSocket = this.serverSocket.accept();
+                clientSocket = this.serverSocket.accept(); //Accept new clients
             } catch (IOException e) {
                 if(isStopped()) {
-                    logger.warning("Server stopped unexpectedly");
-                    System.out.println("Server Stopped.") ;
+                	logger.log(Level.SEVERE,"Server stopped", e);
                     return;
                 }
+                
                 throw new RuntimeException(
                     "Error accepting client connection", e);
             }
-            new Thread(
-                new WorkerRunnable(
-                    clientSocket, "Multithreaded Server")
-            ).start();
+        	logger.info("Creating Thread for client");
+            new Thread(new ThreadClass(clientSocket)).start(); // Create a new thread and assign it to Client Request
         }
-        logger.info("Server stopped successfully");
+    	logger.info("Server stopped");
         System.out.println("Server Stopped.") ;
     }
 
@@ -54,29 +50,35 @@ public class MultiThreadedServer implements Runnable{
     public synchronized void stop(){
         this.isStopped = true;
         try {
+        	logger.info("Server socket closed");
             this.serverSocket.close();
         } catch (IOException e) {
-        	logger.warning("Unable to close the server");
+        	logger.log(Level.SEVERE,"Error closing server ", e);
             throw new RuntimeException("Error closing server", e);
         }
     }
 
-    private void openServerSocket() {
+    private void openServerSocket() { //Creating socket on given port
         try {
+        	logger.info("Server Running on " + this.serverPort);
             this.serverSocket = new ServerSocket(this.serverPort);
         } catch (IOException e) {
-        	logger.warning("Unable to open port 8080");
+        	logger.log(Level.SEVERE,"Cannot open port 8080");
             throw new RuntimeException("Cannot open port 8080", e);
         }
     }
     
+    static Logger logger = Logger.getLogger("MultiThreadServer"); // Initiliaze the logger
+    
     public static void main(String[] args){
+    	MultiThreadServer server = new MultiThreadServer(5000);
+    	new Thread(server).start();
     	FileHandler fh;
 	    try {  
 
 	        // This block configure the logger with handler and formatter  
-	        fh = new FileHandler("/home/ubuntu/MultiThreadServer.log");  
-	        logger.addHandler(fh);
+	        fh = new FileHandler("/home/ubuntu/logs/Gui.log");  //Create which file to use for logs
+	        logger.addHandler(fh); //Adding a handler to write to the file
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);
 
@@ -85,10 +87,6 @@ public class MultiThreadedServer implements Runnable{
 	    } catch (IOException e) {  
 	        e.printStackTrace();  
 	    }  
-    	MultiThreadedServer server = new MultiThreadedServer(9000);
-    	new Thread(server).start();
-    	logger.info("Server started successfully");
-    	
     	/////// UNCOMMENT IF YOU WISH TO STOP SERVER AFTER SPECIFIC TIME
     	/* 
     	try {

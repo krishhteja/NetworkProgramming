@@ -22,7 +22,7 @@ public class MessageServerDispatcher extends Thread {
 
 	public void log(String s) {
 		if (!logging) return;
-		System.out.println("MessageServerDispatcher: " + s);
+		System.err.println("MessageServerDispatcher: " + s);
 	}
 
 	public void run() {

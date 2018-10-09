@@ -37,7 +37,7 @@ public class GuiLinuxCmds extends Frame implements ActionListener{
 
 
 		setLayout(new FlowLayout());
-		labelCmd = new Label("Enter url");
+		labelCmd = new Label("Command or number");
 		add(labelCmd);
 		
 		type = new TextField(80);

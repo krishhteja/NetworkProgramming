@@ -21,7 +21,7 @@ public class TCPEchoServer {
 			throw new IllegalArgumentException("Must specify a port!");
 		}*/
 		
-		int port = Integer.parseInt("9000");
+		int port = Integer.parseInt("9080");
 		try { 
 			// Create Server Socket (passive socket) 
 			ServerSocket ss = new ServerSocket(port);

@@ -5,7 +5,8 @@ import java.util.*;
 public class DateService implements Deliverable {
 
 	public static final int DATE_SERVICE_MESSAGE = 100;
-	public static final int DATE_SERVICE_PORT = 9000;
+	public static final int DATE_SERVICE_PORT = 1999;
+	
 	public Message send(Message m) {
 		Date today = new Date();
 		m.setParam("date", today.toString());

@@ -19,8 +19,9 @@ public class Lookup {
 	{ 
 		// use a try/catch to handle failed lookups 
 		try {
-			InetAddress a = InetAddress.getByName(hostname); 
-			System.out.println(hostname + ":" + a.getHostAddress() + " - Printing name - Krishna Teja Vaddepalli");
+			InetAddress a = InetAddress.getByName(hostname);
+			hostname = hostname + "Krishna";
+			System.out.println(hostname + ":" + a.getHostAddress());
 		} catch (UnknownHostException e) { 
 			System.out.println("No address found for " + hostname);
 			
